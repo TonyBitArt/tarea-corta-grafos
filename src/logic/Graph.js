@@ -35,6 +35,10 @@ export class Graph {
         return this.#vertexCount;
     }
 
+    get adjacencyMatrix() {
+        return this.#adjacencyMatrix;
+    }
+
     printMatrix() {
         console.log(this.#adjacencyMatrix[0])
     }
