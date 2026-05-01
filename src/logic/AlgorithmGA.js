@@ -1,5 +1,5 @@
 import { Graph } from "./Graph.js";
-import { randomSample } from "../utils/randomSample.js";
+import { randomSample } from "../utils/helperFunctions.js";
 
 export class AlgorithmGA {
     #graph;

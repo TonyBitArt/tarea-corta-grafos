@@ -12,6 +12,11 @@ export class Graph {
         this.#adjacencyMatrix[nodeV][nodeU] = 1;
     }
 
+    removeEdge(nodeU, nodeV) {
+        this.#adjacencyMatrix[nodeU][nodeV] = 0;
+        this.#adjacencyMatrix[nodeV][nodeU] = 0;
+    }
+
     areAdjacent(nodeU, nodeV) {
         return this.#adjacencyMatrix[nodeU][nodeV] === 1;
     }
@@ -24,7 +29,7 @@ export class Graph {
     randomizeMatrix() {
         for (let i = 0; i < this.#vertexCount; i++) {
             for (let j = i + 1; j < this.#vertexCount; j++) {
-                if (Math.random() < 0.3) {
+                if (Math.random() < 0.1) {
                     this.addEdge(i,j);
                 }
             }
