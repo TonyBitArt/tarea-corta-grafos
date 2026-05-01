@@ -4,6 +4,7 @@ import CircleNode from './geometry/circleNode';
 
 const nodeTypes = { circle: CircleNode };
 
+// Funcion para representar el grafo usando React Flow
 export function Representation({
   nodes,
   edges,

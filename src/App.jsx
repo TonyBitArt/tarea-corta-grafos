@@ -3,6 +3,13 @@ import { AlgorithmGA } from './logic/AlgorithmGA'
 import { GraphBuilder } from './GUI/GraphBuilder'
 import { Representation } from './GUI/representation'
 
+// Colores
+const COLORS = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8'];
+
+function getColorForGene(gene) {
+  return COLORS[gene - 1];
+}
+
 function App() {
   const [appState, setAppState] = useState('building'); // 'building' | 'visualizing'
   const [graph, setGraph] = useState(null);
@@ -10,9 +17,9 @@ function App() {
   const [edges, setEdges] = useState([]);
   const [coloringSolution, setColoringSolution] = useState(null);
 
-  const handleGraphReady = ({ graph: builtGraph, nodes: builtNodes, edges: builtEdges }) => {
+  const handleGraphReady = ({ graph: builtGraph, nodes: builtNodes, edges: builtEdges, colors: builtColors, mutationRate: builtMutationRate }) => {
     // Apply coloring algorithm
-    const algorithm = new AlgorithmGA(builtGraph, 4, 0.05);
+    const algorithm = new AlgorithmGA(builtGraph, builtColors, builtMutationRate);
     const result = algorithm.geneticAlgorithm();
     
     console.log("Matriz de adyacencia:", builtGraph.adjacencyMatrix);
@@ -40,15 +47,27 @@ function App() {
   }
 
   if (appState === 'visualizing' && graph) {
+    const coloredNodes = nodes.map((node, index) => {
+      const gene = coloringSolution?.bestSolution?.individual?.[index];
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          fillColor: getColorForGene(gene),
+        },
+      };
+    });
+
     return (
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Representation graph={graph} nodes={nodes} edges={edges} isEditable={false} />
+        <Representation graph={graph} nodes={coloredNodes} edges={edges} isEditable={false} />
         
         <button
           onClick={handleBackToBuilder}
           style={{
             position: 'absolute',
-            bottom: '1rem',
+            top: '1rem',
             left: '1rem',
             padding: '0.5rem 1rem',
             backgroundColor: '#ef4444',
@@ -76,12 +95,20 @@ function App() {
           <h3>Solución de Coloreado</h3>
           {coloringSolution && (
             <>
-              <p>Colores usados: {coloringSolution.bestSolution.length}</p>
+              <p>Colores usados: {new Set(coloringSolution.bestSolution.individual).size}</p>
+              <p>Conflictos: {coloringSolution.bestSolution.conflicts}</p>
               <p>Generaciones: {coloringSolution.generations}</p>
               <details>
-                <summary>Ver detalles</summary>
+                <summary>Ver historial de generaciones</summary>
                 <pre style={{ fontSize: '0.8rem', overflow: 'auto', maxHeight: '200px' }}>
-                  {JSON.stringify(coloringSolution.bestSolution, null, 2)}
+                  {JSON.stringify(
+                    coloringSolution.history.map((entry, generation) => ({
+                      generation,
+                      conflicts: entry.conflicts
+                    })),
+                    null,
+                    2
+                  )}
                 </pre>
               </details>
             </>

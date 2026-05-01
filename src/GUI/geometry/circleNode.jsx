@@ -3,6 +3,8 @@ import { Handle, Position } from '@xyflow/react';
 
 const CircleNode = memo(({ data, isConnectable }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const fillColor = data?.fillColor ?? '#fff';
+  const textColor = data?.textColor ?? '#111827';
 
   const handleStyle = {
     left: '50%',
@@ -25,13 +27,14 @@ const CircleNode = memo(({ data, isConnectable }) => {
         width: '60px',
         height: '60px',
         borderRadius: '50%',
-        background: '#fff',
+        background: fillColor,
         border: '2px solid #1a192b',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: '30px',
         position: 'relative',
+        color: textColor,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

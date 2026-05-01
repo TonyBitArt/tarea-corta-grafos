@@ -5,6 +5,13 @@ import { Representation } from './representation';
 import './css/gui.css';
 import { randint } from '../utils/helperFunctions';
 
+// Imports para el selector de colores y tasa de mutación
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
 const MIN_VERTEX_COUNT = 20;
 const MAX_VERTEX_COUNT = 50;
 const NODE_RADIUS = 30;
@@ -65,6 +72,8 @@ export function GraphBuilder({ onGraphReady }) {
   const [graph, setGraph] = useState(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
+  const [colorCount, setColorCount] = useState(4);
+  const [mutationRate, setMutationRate] = useState(0.05);
 
   const initializeGraph = (vertexCount, manual = false) => {
     const newGraph = new Graph(vertexCount);
@@ -123,7 +132,7 @@ export function GraphBuilder({ onGraphReady }) {
 
   const handleGraphFinalized = () => {
     if (graph) {
-      onGraphReady({ graph, nodes, edges });
+      onGraphReady({ graph, nodes, edges, colors: colorCount, mutationRate });
     }
   };
 
@@ -161,6 +170,39 @@ export function GraphBuilder({ onGraphReady }) {
       <div className='background'>
 
         <div style={{ display: 'flex', gap: '2rem' }}>
+
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', marginTop: '0.5rem' }}>
+            <FormControl size="small" sx={{ minWidth: 140}}>
+              <InputLabel id="color-count-label" sx={{color: 'white'}}>Cantidad de colores</InputLabel>
+              <Select
+                labelId="color-count-label"
+                value={colorCount}
+                label="Cantidad de colores"
+                onChange={(e) => setColorCount(Number(e.target.value))}
+                sx={{ textAlign: 'center', '& .MuiSelect-select': { display: 'flex', alignItems: 'center', justifyContent: 'center'}, color: 'white' }}
+              >
+                {[3,4].map((c) => (
+                  <MenuItem key={c} value={c} sx={{ textAlign: 'center' }}>{c}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" sx={{ minWidth: 160 }}>
+              <InputLabel id="mutation-rate-label" sx={{color: 'white'}}>Prob. mutación</InputLabel>
+              <Select
+                labelId="mutation-rate-label"
+                value={mutationRate}
+                label="Probabilidad de mutación"
+                onChange={(e) => setMutationRate(Number(e.target.value))}
+                sx={{ textAlign: 'center', '& .MuiSelect-select': { display: 'flex', alignItems: 'center', justifyContent: 'center'}, color: 'white' }}
+              >
+                {[0.01, 0.05, 0.1].map((r) => (
+                  <MenuItem key={r} value={r} sx={{ textAlign: 'center' }}>{r}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
           <button
             onClick={handleAutomatic}
             onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
