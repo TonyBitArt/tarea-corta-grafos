@@ -18,6 +18,7 @@ const NODE_RADIUS = 30;
 const COLLISION_MARGIN = 100;
 const MAX_PLACEMENT_ATTEMPTS = 50;
 
+// Función para determinar si una posición es valida para el posicionamiento de un nodo
 function isPositionValid(position, existingNodes) {
   for (const node of existingNodes) {
     const dx = position.x - node.position.x;
@@ -30,6 +31,7 @@ function isPositionValid(position, existingNodes) {
   return true;
 }
 
+// Función para crear un nodo. Valida que la ubicación del nodo sea válida con la función anterior
 function createNode(id, existingNodes = []) {
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
@@ -54,6 +56,7 @@ function createNode(id, existingNodes = []) {
   };
 }
 
+// Función para clonar un grafo existente pero con un nuevo número de vértices. Esto es útil para agregar o eliminar nodos sin perder la estructura del grafo ya creada.
 function cloneGraphWithVertexCount(sourceGraph, newVertexCount) {
   const newGraph = new Graph(newVertexCount);
   const limit = Math.min(sourceGraph.vertexCount, newVertexCount);
@@ -67,6 +70,7 @@ function cloneGraphWithVertexCount(sourceGraph, newVertexCount) {
   return newGraph;
 }
 
+// Función para crear un grafo. Funciona tanto para creación manual como automática. Valida que cada nodo tenga por lo menos una arista
 export function GraphBuilder({ onGraphReady }) {
   const [currentStep, setCurrentStep] = useState('choice');
   const [graph, setGraph] = useState(null);
@@ -119,23 +123,27 @@ export function GraphBuilder({ onGraphReady }) {
     setEdges(nextEdges);
   };
 
+  // Crea un grafo de forma automática con un número aleatorio de vertices dentro del rango válido
   const handleAutomatic = () => {
     const vertexCount = MIN_VERTEX_COUNT + Math.floor(Math.random() * (MAX_VERTEX_COUNT - MIN_VERTEX_COUNT + 1));
     initializeGraph(vertexCount);
     setCurrentStep('manual'); // Cambiar a modo manual para permitir edición después de la generación automática
   };
 
+  // Crea un grafo de forma manual con la mínima cantidad de nodos. Al cambiar el paso a manual, no se le añaden aristas
   const handleManual = () => {
     initializeGraph(MIN_VERTEX_COUNT, true);
     setCurrentStep('manual');
   };
 
+  // Función llamada al finalizar la construcción del grafo. Llama a la función onGraphReady pasada como prop para enviar el grafo construido al componente padre (App.jsx) y así poder aplicar el algoritmo de coloreo.
   const handleGraphFinalized = () => {
     if (graph) {
       onGraphReady({ graph, nodes, edges, colors: colorCount, mutationRate });
     }
   };
 
+  // Función para creación de nodos. Crea un nuevo grafo con el nodo nuevo para que así no se reseteen la posiciones de los nodos
   const handleAddNodes = () => {
     if (!graph || graph.vertexCount >= MAX_VERTEX_COUNT) {
       return;
@@ -151,6 +159,7 @@ export function GraphBuilder({ onGraphReady }) {
     });
   };
 
+  // Función para remover nodos. Crea un nuevo grafo sin el nodo a eliminar para que así no se reseteen la posiciones de los nodos
   const handleRemoveNodes = () => {
     if (!graph || graph.vertexCount <= MIN_VERTEX_COUNT) {
       return;
@@ -172,14 +181,14 @@ export function GraphBuilder({ onGraphReady }) {
         <div style={{ display: 'flex', gap: '2rem' }}>
 
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', marginTop: '0.5rem' }}>
-            <FormControl size="small" sx={{ minWidth: 140}}>
+            <FormControl size="large" sx={{ minWidth: 140}}>
               <InputLabel id="color-count-label" sx={{color: 'white'}}>Cantidad de colores</InputLabel>
               <Select
                 labelId="color-count-label"
                 value={colorCount}
                 label="Cantidad de colores"
                 onChange={(e) => setColorCount(Number(e.target.value))}
-                sx={{ textAlign: 'center', '& .MuiSelect-select': { display: 'flex', alignItems: 'center', justifyContent: 'center'}, color: 'white' }}
+                sx={{ textAlign: 'center', '& .MuiSelect-select': { display: 'flex', alignItems: 'center', justifyContent: 'center'}, color: 'white', fontSize: '30px' }}
               >
                 {[3,4].map((c) => (
                   <MenuItem key={c} value={c} sx={{ textAlign: 'center' }}>{c}</MenuItem>
@@ -187,14 +196,14 @@ export function GraphBuilder({ onGraphReady }) {
               </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 160 }}>
+            <FormControl size="large" sx={{ minWidth: 160 }}>
               <InputLabel id="mutation-rate-label" sx={{color: 'white'}}>Prob. mutación</InputLabel>
               <Select
                 labelId="mutation-rate-label"
                 value={mutationRate}
                 label="Probabilidad de mutación"
                 onChange={(e) => setMutationRate(Number(e.target.value))}
-                sx={{ textAlign: 'center', '& .MuiSelect-select': { display: 'flex', alignItems: 'center', justifyContent: 'center'}, color: 'white' }}
+                sx={{ textAlign: 'center', '& .MuiSelect-select': { display: 'flex', alignItems: 'center', justifyContent: 'center'}, color: 'white', fontSize: '30px' }}
               >
                 {[0.01, 0.05, 0.1].map((r) => (
                   <MenuItem key={r} value={r} sx={{ textAlign: 'center' }}>{r}</MenuItem>

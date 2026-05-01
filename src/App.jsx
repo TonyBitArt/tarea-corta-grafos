@@ -11,12 +11,35 @@ function getColorForGene(gene) {
 }
 
 function App() {
+  // Variable para definir si estamos construyendo el grafo o visualizandolo
   const [appState, setAppState] = useState('building'); // 'building' | 'visualizing'
+  
+  // Variables para la creación del grafo
   const [graph, setGraph] = useState(null);
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
+
+  /*
+    Solución proporcionada por el algoritmo de colorado
+
+    Es un objeto que tiene la siguiente estructura:
+    {
+      bestSolution: {
+        individual: [1, 2, 3, 1, 2], // Array de genes que representan el color asignado a cada nodo
+        conflicts: 0 // Número de conflictos en la solución (nodos adyacentes con el mismo color)
+      },
+      generations: 100, // Número de generaciones que tomó encontrar la solución
+      history: [ // Historial de generaciones con su respectivo número de conflictos
+        { generation: 0, conflicts: 10 },
+        { generation: 1, conflicts: 8 },
+        ...
+        { generation: 100, conflicts: 0 }
+      ]
+    }
+  */
   const [coloringSolution, setColoringSolution] = useState(null);
 
+  // Función llamada una vez el grafo ya está listo para ser coloreado
   const handleGraphReady = ({ graph: builtGraph, nodes: builtNodes, edges: builtEdges, colors: builtColors, mutationRate: builtMutationRate }) => {
     // Apply coloring algorithm
     const algorithm = new AlgorithmGA(builtGraph, builtColors, builtMutationRate);
@@ -34,6 +57,7 @@ function App() {
     setAppState('visualizing');
   };
 
+  // Función para volver al estado de construcción del grafo. (Volver al menú principal) Borra todo el grafo
   const handleBackToBuilder = () => {
     setAppState('building');
     setGraph(null);
@@ -46,7 +70,9 @@ function App() {
     return <GraphBuilder onGraphReady={handleGraphReady} />
   }
 
+  // Si estamos visualizando el grafo, coloreamos los nodos según la solución encontrada por el algoritmo genético
   if (appState === 'visualizing' && graph) {
+    // Itera por cada nodo y cambia su color dependiendo de la solución dada por el algoritmo
     const coloredNodes = nodes.map((node, index) => {
       const gene = coloringSolution?.bestSolution?.individual?.[index];
 

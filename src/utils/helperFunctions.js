@@ -10,6 +10,7 @@ export function randomSample(list, num) {
     return sample;
 }
 
+// Función randint porque el ranint manual en js es complejo
 export function randint(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }

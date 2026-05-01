@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 
+// Creación de nodo circular, porque el nodo por defecto de la libreria no se adaptaba bien al formato esperado.
 const CircleNode = memo(({ data, isConnectable }) => {
   const [isHovered, setIsHovered] = useState(false);
   const fillColor = data?.fillColor ?? '#fff';
