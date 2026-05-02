@@ -1,3 +1,7 @@
+import { randint } from "../utils/helperFunctions.js";
+import { create, all } from 'mathjs'
+const math = create(all)
+
 export class Graph {
     #vertexCount;
     #adjacencyMatrix;
@@ -28,10 +32,18 @@ export class Graph {
 
     randomizeMatrix() {
         for (let i = 0; i < this.#vertexCount; i++) {
-            for (let j = i + 1; j < this.#vertexCount; j++) {
-                if (Math.random() < 0.1) {
-                    this.addEdge(i,j);
+            let destination = i;
+            while (destination === i || this.#adjacencyMatrix[i][destination] === 1) {
+                destination = randint(0, this.#vertexCount - 1);
+            }
+            this.addEdge(i, destination);
+
+            while(math.random() < 0.01) {
+                destination = i
+                while (destination === i || this.#adjacencyMatrix[i][destination] === 1) {
+                    destination = randint(0, this.#vertexCount - 1);
                 }
+                this.addEdge(i, destination);
             }
         }
     }
